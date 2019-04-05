@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "outDir": "build",
+    "target": "es5",
+    "declaration": true
+  },
+  "include": ["pages/", "lib/", "declarations.d.ts", "server.minimal.ts", "server.ts"],
+  "exclude": ["*.test.*"]
+}
