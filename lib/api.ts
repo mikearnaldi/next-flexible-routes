@@ -82,8 +82,10 @@ export function defRPQ<
 
   return {
     ...route,
-    generateAsPath: asPath,
-    pageUrl: pageUrl,
+    generateAsPath: (params: TP, query: TQ) =>
+      asPath(route.params.encode(params), route.query.encode(query)),
+    pageUrl: (params: TP, query: TQ) =>
+      pageUrl(route.params.encode(params), route.query.encode(query)),
     linkTo: (params: TP, query: TQ) => ({
       as: asPath(route.params.encode(params), query),
       href: pageUrl(route.params.encode(params), query)
@@ -124,8 +126,8 @@ export function defRP<P extends t.Props, PO extends t.Props>(
 
   return {
     ...route,
-    generateAsPath: asPath,
-    pageUrl: pageUrl,
+    generateAsPath: (params: TP) => asPath(route.params.encode(params)),
+    pageUrl: (params: TP) => pageUrl(route.params.encode(params)),
     linkTo: (params: TP) => ({
       as: asPath(route.params.encode(params)),
       href: pageUrl(route.params.encode(params))
@@ -171,11 +173,11 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
 
   return {
     ...route,
-    generateAsPath: asPath,
-    pageUrl: pageUrl,
+    generateAsPath: (query: TQ) => asPath(route.query.encode(query)),
+    pageUrl: (query: TQ) => pageUrl(route.query.encode(query)),
     linkTo: (query: TQ) => ({
-      as: asPath(query),
-      href: pageUrl(query)
+      as: asPath(route.query.encode(query)),
+      href: pageUrl(route.query.encode(query))
     }),
     Match
   };

@@ -4,19 +4,27 @@ import { gen } from "testcheck";
 import { defRPQ, defRQ, defRP, defR } from "./api";
 import { T } from "./extended.iots";
 import { stringT } from ".";
+import { numberT, dateT } from "./codecs";
 
 describe("Api", () => {
   check.it(
     "api should describe parametric routes correctly",
     gen.asciiString.notEmpty(),
     gen.asciiString.notEmpty(),
-    (valueA, valueB) => {
+    gen.posNumber.notEmpty(),
+    (valueA, valueB, n) => {
       const routeA = defRP({
         page: "testA",
-        pattern: "/testA/:valueA/test",
-        params: T.required({
-          valueA: stringT
-        })
+        pattern: "/testA/:valueA/test/:dt/:n?",
+        params: T.both(
+          {
+            valueA: stringT,
+            dt: dateT
+          },
+          {
+            n: numberT
+          }
+        )
       });
 
       const routeB = defRPQ({
@@ -30,8 +38,12 @@ describe("Api", () => {
         })
       });
 
-      expect(routeA.generateAsPath({ valueA })).toEqual(
-        `/testA/${encodeURIComponent(valueA)}/test`
+      const dt = new Date();
+
+      expect(routeA.generateAsPath({ valueA, dt, n })).toEqual(
+        `/testA/${encodeURIComponent(valueA)}/test/${encodeURIComponent(
+          dt.toISOString()
+        )}/${encodeURIComponent(n.toString())}`
       );
 
       const encB = encodeURIComponent(valueB);
