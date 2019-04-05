@@ -95,7 +95,7 @@ export function defRPQ<
       query
     });
 
-  const Match: React.SFC<{
+  const Match: React.FunctionComponent<{
     children: (p: TypeParams, q: TypeQuery) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
@@ -151,7 +151,7 @@ export function defRP<
       query: {}
     });
 
-  const Match: React.SFC<{
+  const Match: React.FunctionComponent<{
     children: (p: TypeParams) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
@@ -203,7 +203,7 @@ export function defRQ<
       query: query
     });
 
-  const Match: React.SFC<{
+  const Match: React.FunctionComponent<{
     children: (q: TypeQuery) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
@@ -244,7 +244,7 @@ export function defR(route: RouteSpec): Route {
       query: {}
     });
 
-  const Match: React.SFC<{
+  const Match: React.FunctionComponent<{
     children: () => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
