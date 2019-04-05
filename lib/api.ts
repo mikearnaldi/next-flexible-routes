@@ -8,13 +8,7 @@ import { generateAsPath } from "./transform";
 import { RouteQ, RouteQSpec } from "./types/RouteQ";
 import { RoutePQ, RoutePQSpec } from "./types/RoutePQ";
 import { withRouter } from "next/router";
-import {
-  fromEither,
-  tryCatch,
-  option,
-  Option,
-  fromNullable
-} from "fp-ts/lib/Option";
+import { fromEither, tryCatch, option, fromNullable } from "fp-ts/lib/Option";
 import { Do } from "fp-ts-contrib/lib/Do";
 import { RouteSpec, Route } from "./types/Route";
 import { RoutePSpec, RouteP } from "./types/RouteP";
@@ -69,24 +63,31 @@ function throwIfWrongParams<Required extends t.Props, Optional extends t.Props>(
 }
 
 export function defRPQ<
-  P extends t.Props,
-  PO extends t.Props,
-  Q extends t.Props,
-  QO extends t.Props
->(route: RoutePQSpec<P, PO, Q, QO>): RoutePQ<P, PO, Q, QO> {
-  type TP = t.TypeOf<typeof route.params>;
-  type TQ = t.TypeOf<typeof route.query>;
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props,
+  RequiredQuery extends t.Props,
+  OptionalQuery extends t.Props
+>(
+  route: RoutePQSpec<
+    RequiredParams,
+    OptionalParams,
+    RequiredQuery,
+    OptionalQuery
+  >
+): RoutePQ<RequiredParams, OptionalParams, RequiredQuery, OptionalQuery> {
+  type TypeParams = t.TypeOf<typeof route.params>;
+  type TypeQuery = t.TypeOf<typeof route.query>;
 
   throwIfWrongParams(route);
 
-  const asPath = (params: TP, query: TQ) =>
+  const asPath = (params: TypeParams, query: TypeQuery) =>
     Do(option)
       .bind("qs", option.of(queryString.stringify(query, { strict: false })))
       .bind("path", generateAsPath(route.pattern, params))
       .return(s => `${s.path}${s.qs.length > 0 ? `?${s.qs}` : ""}`)
       .toUndefined();
 
-  const pageUrl = (params: TP, query: TQ) =>
+  const pageUrl = (params: TypeParams, query: TypeQuery) =>
     calculateUrl({
       original: asPath(params, query),
       page: route.page,
@@ -95,7 +96,7 @@ export function defRPQ<
     });
 
   const Match: React.SFC<{
-    children: (p: TP, q: TQ) => React.ReactElement;
+    children: (p: TypeParams, q: TypeQuery) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
       withRouter(({ router }) =>
@@ -118,28 +119,31 @@ export function defRPQ<
 
   return {
     ...route,
-    generateAsPath: (params: TP, query: TQ) =>
+    generateAsPath: (params: TypeParams, query: TypeQuery) =>
       asPath(route.params.encode(params), route.query.encode(query)),
-    pageUrl: (params: TP, query: TQ) =>
+    pageUrl: (params: TypeParams, query: TypeQuery) =>
       pageUrl(route.params.encode(params), route.query.encode(query)),
-    linkTo: (params: TP, query: TQ) => ({
+    linkTo: (params: TypeParams, query: TypeQuery) => ({
       as: asPath(route.params.encode(params), query),
       href: pageUrl(route.params.encode(params), query)
     }),
     Match
   };
 }
-export function defRP<P extends t.Props, PO extends t.Props>(
-  route: RoutePSpec<P, PO>
-): RouteP<P, PO> {
-  type TP = t.TypeOf<typeof route.params>;
+export function defRP<
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props
+>(
+  route: RoutePSpec<RequiredParams, OptionalParams>
+): RouteP<RequiredParams, OptionalParams> {
+  type TypeParams = t.TypeOf<typeof route.params>;
 
   throwIfWrongParams(route);
 
-  const asPath = (params: TP) =>
+  const asPath = (params: TypeParams) =>
     generateAsPath(route.pattern, params).toUndefined();
 
-  const pageUrl = (params: TP) =>
+  const pageUrl = (params: TypeParams) =>
     calculateUrl({
       original: asPath(params),
       page: route.page,
@@ -148,7 +152,7 @@ export function defRP<P extends t.Props, PO extends t.Props>(
     });
 
   const Match: React.SFC<{
-    children: (p: TP) => React.ReactElement;
+    children: (p: TypeParams) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
       withRouter(({ router }) =>
@@ -165,9 +169,9 @@ export function defRP<P extends t.Props, PO extends t.Props>(
 
   return {
     ...route,
-    generateAsPath: (params: TP) => asPath(route.params.encode(params)),
-    pageUrl: (params: TP) => pageUrl(route.params.encode(params)),
-    linkTo: (params: TP) => ({
+    generateAsPath: (params: TypeParams) => asPath(route.params.encode(params)),
+    pageUrl: (params: TypeParams) => pageUrl(route.params.encode(params)),
+    linkTo: (params: TypeParams) => ({
       as: asPath(route.params.encode(params)),
       href: pageUrl(route.params.encode(params))
     }),
@@ -175,12 +179,15 @@ export function defRP<P extends t.Props, PO extends t.Props>(
   };
 }
 
-export function defRQ<Q extends t.Props, QO extends t.Props>(
-  route: RouteQSpec<Q, QO>
-): RouteQ<Q, QO> {
-  type TQ = t.TypeOf<typeof route.query>;
+export function defRQ<
+  RequiredQuery extends t.Props,
+  OptionalQuery extends t.Props
+>(
+  route: RouteQSpec<RequiredQuery, OptionalQuery>
+): RouteQ<RequiredQuery, OptionalQuery> {
+  type TypeQuery = t.TypeOf<typeof route.query>;
 
-  const asPath = (query: TQ) => {
+  const asPath = (query: TypeQuery) => {
     const qs = queryString.stringify(query, { strict: false });
 
     return generateAsPath(route.pattern, {})
@@ -188,7 +195,7 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
       .toUndefined();
   };
 
-  const pageUrl = (query: TQ) =>
+  const pageUrl = (query: TypeQuery) =>
     calculateUrl({
       original: route.pattern,
       page: route.page,
@@ -197,7 +204,7 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
     });
 
   const Match: React.SFC<{
-    children: (q: TQ) => React.ReactElement;
+    children: (q: TypeQuery) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
       withRouter(({ router }) =>
@@ -216,9 +223,9 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
 
   return {
     ...route,
-    generateAsPath: (query: TQ) => asPath(route.query.encode(query)),
-    pageUrl: (query: TQ) => pageUrl(route.query.encode(query)),
-    linkTo: (query: TQ) => ({
+    generateAsPath: (query: TypeQuery) => asPath(route.query.encode(query)),
+    pageUrl: (query: TypeQuery) => pageUrl(route.query.encode(query)),
+    linkTo: (query: TypeQuery) => ({
       as: asPath(route.query.encode(query)),
       href: pageUrl(route.query.encode(query))
     }),
