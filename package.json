@@ -3,11 +3,11 @@
   "private": false,
   "license": "MIT",
   "author": "Michael Arnaldi",
-  "version": "0.0.1-alpha.6",
+  "version": "0.0.1-alpha.7",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/mikearnaldi/next-flexible-routes.git"
-  },  
+    "type": "git",
+    "url": "https://github.com/mikearnaldi/next-flexible-routes.git"
+  },
   "scripts": {
     "build": "next build",
     "dev": "ts-node ./server.dev.ts",
@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "main": "./lib/index.js",
-  "dependencies": {
+  "peerDependencies": {
     "assert": "^1.4.1",
     "express": "^4.16.4",
     "fp-ts": "^1.15.0",
@@ -47,6 +47,21 @@
     "jest-haste-map": "^24.5.0",
     "jest-resolve": "^24.5.0",
     "testcheck": "^1.0.0-rc.2",
-    "ts-jest": "^24.0.0"
+    "ts-jest": "^24.0.0",
+    "assert": "^1.4.1",
+    "express": "^4.16.4",
+    "fp-ts": "^1.15.0",
+    "fp-ts-contrib": "^0.0.2",
+    "io-ts": "^1.8.4",
+    "lodash": "^4.17.11",
+    "monocle-ts": "^1.7.1",
+    "next": "^8.0.3",
+    "path-to-regexp": "^3.0.0",
+    "preact": "^8.4.2",
+    "query-string": "^6.4.2",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.4000"
   }
 }
