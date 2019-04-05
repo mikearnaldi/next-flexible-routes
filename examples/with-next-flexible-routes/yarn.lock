@@ -3281,10 +3281,10 @@ neo-async@^2.5.0:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
   integrity sha512-MFh0d/Wa7vkKO3Y3LlacqAEeHK0mckVqzDieUKTT+KGxi+zIpeVsFxymkIiRpbpDziHc290Xr9A1O4Om7otoRA==
 
-next-flexible-routes@0.0.1-alpha.5:
-  version "0.0.1-alpha.5"
-  resolved "https://registry.yarnpkg.com/next-flexible-routes/-/next-flexible-routes-0.0.1-alpha.5.tgz#560c12824accd0cf62a78a65f61bfa688180f2eb"
-  integrity sha512-GrvlPvvNsYp0Ps0wfHniSIsr2Roz9MwfLWljzAjUzqFsw9/UFzo59BjcFPenGx1It1fnbROhjt3HF4kbg7ZC7A==
+next-flexible-routes@0.0.1-alpha.6:
+  version "0.0.1-alpha.6"
+  resolved "https://registry.yarnpkg.com/next-flexible-routes/-/next-flexible-routes-0.0.1-alpha.6.tgz#ff68595fa4f585e042c61bbce6d7886acf8f8d63"
+  integrity sha512-IIWAt4pglda+zIadUa8AzlfrN30iJL9zJj/63kEMbtP8qJoNCBq/RSXLgHfrs2rMDggPQLm8F+e27taD0ejRsA==
   dependencies:
     assert "^1.4.1"
     express "^4.16.4"
