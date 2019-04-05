@@ -17,8 +17,13 @@ export type RouteP<
   }>;
 };
 
-export type RoutePSpec<P extends t.Props, PO extends t.Props> = {
+export type RoutePSpec<
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props
+> = {
   page: string;
   pattern: string;
-  params: t.IntersectionC<[t.TypeC<P>, t.PartialC<PO>]>;
+  params: t.IntersectionC<
+    [t.TypeC<RequiredParams>, t.PartialC<OptionalParams>]
+  >;
 };

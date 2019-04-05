@@ -17,8 +17,11 @@ export type RouteQ<
   }>;
 };
 
-export type RouteQSpec<Q extends t.Props, QO extends t.Props> = {
+export type RouteQSpec<
+  RequiredQuery extends t.Props,
+  OptionalQuery extends t.Props
+> = {
   page: string;
   pattern: string;
-  query: t.IntersectionC<[t.TypeC<Q>, t.PartialC<QO>]>;
+  query: t.IntersectionC<[t.TypeC<RequiredQuery>, t.PartialC<OptionalQuery>]>;
 };

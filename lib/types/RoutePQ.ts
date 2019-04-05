@@ -35,13 +35,15 @@ export type RoutePQ<
 };
 
 export type RoutePQSpec<
-  P extends t.Props,
-  PO extends t.Props,
-  Q extends t.Props,
-  QO extends t.Props
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props,
+  RequiredQuery extends t.Props,
+  OptionalQuery extends t.Props
 > = {
   page: string;
   pattern: string;
-  params: t.IntersectionC<[t.TypeC<P>, t.PartialC<PO>]>;
-  query: t.IntersectionC<[t.TypeC<Q>, t.PartialC<QO>]>;
+  params: t.IntersectionC<
+    [t.TypeC<RequiredParams>, t.PartialC<OptionalParams>]
+  >;
+  query: t.IntersectionC<[t.TypeC<RequiredQuery>, t.PartialC<OptionalQuery>]>;
 };
