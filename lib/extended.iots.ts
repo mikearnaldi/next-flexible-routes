@@ -1,10 +1,12 @@
 import * as iots from "io-ts";
 
 export const T = {
-  optional: <PO extends iots.Props>(p: PO) =>
+  optional: <Optional extends iots.Props>(p: Optional) =>
     iots.intersection([iots.type({}), iots.partial(p)]),
-  required: <P extends iots.Props>(p: P) =>
+  required: <Required extends iots.Props>(p: Required) =>
     iots.intersection([iots.type(p), iots.partial({})]),
-  both: <P extends iots.Props, PO extends iots.Props>(r: P, o: PO) =>
-    iots.intersection([iots.type(r), iots.partial(o)])
+  both: <Required extends iots.Props, Optional extends iots.Props>(
+    r: Required,
+    o: Optional
+  ) => iots.intersection([iots.type(r), iots.partial(o)])
 };
