@@ -1,5 +1,7 @@
 import React from "react";
 import * as t from "io-ts";
+import L from "lodash";
+import * as pr from "path-to-regexp";
 import queryString from "query-string";
 import { calculateUrl, matchOrNone } from "./rewrite";
 import { generateAsPath } from "./transform";
@@ -10,6 +12,9 @@ import { fromEither, tryCatch, option } from "fp-ts/lib/Option";
 import { Do } from "fp-ts-contrib/lib/Do";
 import { RouteSpec, Route } from "./types/Route";
 import { RoutePSpec, RouteP } from "./types/RouteP";
+import * as assert from "assert";
+import { spy } from "fp-ts/lib/Trace";
+import { OptionalT, IntersectionType } from "./types/OptionalT";
 
 function parseQuery(query: Record<string, string | string[]>) {
   return tryCatch(() =>
@@ -40,6 +45,25 @@ function matchQuery(
   );
 }
 
+function throwIfWrongParams(
+  route: RouteSpec & { params: IntersectionType<{}, {}> }
+) {
+  const params = L.flatten(route.params.types.map(p => Object.keys(p.props)));
+  const inPattern = pr
+    .parse(route.pattern)
+    .filter(e => typeof e === "object")
+    .map(o => o["name"]);
+
+  if (!L.isEqual(params, inPattern)) {
+    throw new Error(
+      "parameters (" +
+        params.join(",") +
+        ") specified in .params should match parameters specified in pattern: " +
+        route.pattern
+    );
+  }
+}
+
 export function defRPQ<
   P extends t.Props,
   PO extends t.Props,
@@ -48,6 +72,8 @@ export function defRPQ<
 >(route: RoutePQSpec<P, PO, Q, QO>): RoutePQ<P, PO, Q, QO> {
   type TP = t.TypeOf<typeof route.params>;
   type TQ = t.TypeOf<typeof route.query>;
+
+  throwIfWrongParams(route);
 
   const asPath = (params: TP, query: TQ) =>
     Do(option)
@@ -93,11 +119,12 @@ export function defRPQ<
     Match
   };
 }
-
 export function defRP<P extends t.Props, PO extends t.Props>(
   route: RoutePSpec<P, PO>
 ): RouteP<P, PO> {
   type TP = t.TypeOf<typeof route.params>;
+
+  throwIfWrongParams(route);
 
   const asPath = (params: TP) =>
     generateAsPath(route.pattern, params).toNullable();
