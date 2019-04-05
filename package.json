@@ -15,6 +15,20 @@
     "test": "jest"
   },
   "main": "./lib/index.js",
+  "keywords": [
+    "isomorphic",
+    "universal",
+    "ssr",
+    "node",
+    "react.js",
+    "react",
+    "next.js",
+    "routes",
+    "nextjs",
+    "router",
+    "pretty-route",
+    "flexible-route"
+  ],
   "peerDependencies": {
     "assert": "^1.4.1",
     "express": "^4.16.4",
