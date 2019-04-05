@@ -8,7 +8,7 @@ export const numberT = new t.Type<number, string, string>(
     return isNaN(n) ? t.failure(s, c) : t.success(n);
   },
   String
-);
+) as t.Mixed;
 
 export const stringT = new t.Type<string, string, string>(
   "StringCodec",
@@ -17,7 +17,7 @@ export const stringT = new t.Type<string, string, string>(
     return t.success(s);
   },
   String
-);
+) as t.Mixed;
 
 export const dateT = new t.Type<Date, string, unknown>(
   "DateFromString",
@@ -28,4 +28,4 @@ export const dateT = new t.Type<Date, string, unknown>(
       return isNaN(d.getTime()) ? t.failure(u, c) : t.success(d);
     }),
   a => a.toISOString()
-);
+) as t.Mixed;

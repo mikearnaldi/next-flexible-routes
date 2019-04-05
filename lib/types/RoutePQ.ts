@@ -17,11 +17,11 @@ export type RoutePQ<
   generateAsPath: (
     p: OptionalT<RequiredParams, OptionalParams>,
     q: OptionalT<RequiredQuery, OptionalQuery>
-  ) => string;
+  ) => string | undefined;
   pageUrl: (
     p: OptionalT<RequiredParams, OptionalParams>,
     q: OptionalT<RequiredQuery, OptionalQuery>
-  ) => string;
+  ) => string | undefined;
   linkTo: (
     p: OptionalT<RequiredParams, OptionalParams>,
     q: OptionalT<RequiredQuery, OptionalQuery>

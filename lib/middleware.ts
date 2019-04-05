@@ -16,7 +16,7 @@ export const rewriteMiddleware: (routes: RouteArray) => RequestHandler = (
   );
 
   if (routeOpt.isSome()) {
-    req.url = routeOpt.toNullable();
+    req.url = routeOpt.getOrElse(req.url);
   }
 
   next();

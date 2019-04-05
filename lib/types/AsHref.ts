@@ -1,4 +1,4 @@
 export type AsHref = {
-  as: string;
-  href: string;
+  as: string | undefined;
+  href: string | undefined;
 };

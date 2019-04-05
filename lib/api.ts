@@ -1,22 +1,26 @@
 import React from "react";
 import * as t from "io-ts";
 import L from "lodash";
-import * as pr from "path-to-regexp";
+import pr from "path-to-regexp";
 import queryString from "query-string";
 import { calculateUrl, matchOrNone } from "./rewrite";
 import { generateAsPath } from "./transform";
 import { RouteQ, RouteQSpec } from "./types/RouteQ";
 import { RoutePQ, RoutePQSpec } from "./types/RoutePQ";
 import { withRouter } from "next/router";
-import { fromEither, tryCatch, option } from "fp-ts/lib/Option";
+import {
+  fromEither,
+  tryCatch,
+  option,
+  Option,
+  fromNullable
+} from "fp-ts/lib/Option";
 import { Do } from "fp-ts-contrib/lib/Do";
 import { RouteSpec, Route } from "./types/Route";
 import { RoutePSpec, RouteP } from "./types/RouteP";
-import * as assert from "assert";
-import { spy } from "fp-ts/lib/Trace";
-import { OptionalT, IntersectionType } from "./types/OptionalT";
+import { IntersectionType } from "./types/OptionalT";
 
-function parseQuery(query: Record<string, string | string[]>) {
+function parseQuery(query: Record<string, string | string[] | undefined>) {
   return tryCatch(() =>
     query.query && typeof query.query === "string"
       ? JSON.parse(query.query)
@@ -24,7 +28,7 @@ function parseQuery(query: Record<string, string | string[]>) {
   );
 }
 
-function parseParams(query: Record<string, string | string[]>) {
+function parseParams(query: Record<string, string | string[] | undefined>) {
   return tryCatch(() =>
     query.params && typeof query.params === "string"
       ? JSON.parse(query.params)
@@ -33,7 +37,7 @@ function parseParams(query: Record<string, string | string[]>) {
 }
 
 function matchQuery(
-  query: Record<string, string | string[]>,
+  query: Record<string, string | string[] | undefined>,
   asPath: string,
   pattern: string
 ) {
@@ -45,14 +49,14 @@ function matchQuery(
   );
 }
 
-function throwIfWrongParams(
-  route: RouteSpec & { params: IntersectionType<{}, {}> }
+function throwIfWrongParams<Required extends t.Props, Optional extends t.Props>(
+  route: RouteSpec & { params: IntersectionType<Required, Optional> }
 ) {
   const params = L.flatten(route.params.types.map(p => Object.keys(p.props)));
   const inPattern = pr
     .parse(route.pattern)
     .filter(e => typeof e === "object")
-    .map(o => o["name"]);
+    .map(o => L.get(o, "name"));
 
   if (!L.isEqual(params, inPattern)) {
     throw new Error(
@@ -80,7 +84,7 @@ export function defRPQ<
       .bind("qs", option.of(queryString.stringify(query, { strict: false })))
       .bind("path", generateAsPath(route.pattern, params))
       .return(s => `${s.path}${s.qs.length > 0 ? `?${s.qs}` : ""}`)
-      .toNullable();
+      .toUndefined();
 
   const pageUrl = (params: TP, query: TQ) =>
     calculateUrl({
@@ -94,13 +98,19 @@ export function defRPQ<
     children: (p: TP, q: TQ) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
-      withRouter(({ router: { query, asPath } }) =>
+      withRouter(({ router }) =>
         Do(option)
-          .bindL("match", _ => matchQuery(query, asPath, route.pattern))
-          .bindL("parse", _ => parseParams(query))
-          .bindL("query", _ => parseQuery(query))
-          .bindL("decodedQuery", s => fromEither(route.query.decode(s.query)))
-          .bindL("decodedParams", s => fromEither(route.params.decode(s.parse)))
+          .bindL("query", _ => fromNullable(L.get(router, "query")))
+          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
+          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("parsedParams", s => parseParams(s.query))
+          .bindL("parsedQuery", s => parseQuery(s.query))
+          .bindL("decodedQuery", s =>
+            fromEither(route.query.decode(s.parsedQuery))
+          )
+          .bindL("decodedParams", s =>
+            fromEither(route.params.decode(s.parsedParams))
+          )
           .return(s => children(s.decodedParams, s.decodedQuery))
           .toNullable()
       )
@@ -127,7 +137,7 @@ export function defRP<P extends t.Props, PO extends t.Props>(
   throwIfWrongParams(route);
 
   const asPath = (params: TP) =>
-    generateAsPath(route.pattern, params).toNullable();
+    generateAsPath(route.pattern, params).toUndefined();
 
   const pageUrl = (params: TP) =>
     calculateUrl({
@@ -141,10 +151,12 @@ export function defRP<P extends t.Props, PO extends t.Props>(
     children: (p: TP) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
-      withRouter(({ router: { query, asPath } }) =>
+      withRouter(({ router }) =>
         Do(option)
-          .bindL("match", _ => matchQuery(query, asPath, route.pattern))
-          .bindL("parse", _ => parseParams(query))
+          .bindL("query", _ => fromNullable(L.get(router, "query")))
+          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
+          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("parse", s => parseParams(s.query))
           .bindL("decodedParams", s => fromEither(route.params.decode(s.parse)))
           .return(s => children(s.decodedParams))
           .toNullable()
@@ -173,7 +185,7 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
 
     return generateAsPath(route.pattern, {})
       .map(s => `${s}${qs.length > 0 ? `?${qs}` : ""}`)
-      .toNullable();
+      .toUndefined();
   };
 
   const pageUrl = (query: TQ) =>
@@ -188,11 +200,15 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
     children: (q: TQ) => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
-      withRouter(({ router: { query, asPath } }) =>
+      withRouter(({ router }) =>
         Do(option)
-          .bindL("match", _ => matchQuery(query, asPath, route.pattern))
-          .bindL("query", _ => parseQuery(query))
-          .bindL("decodedQuery", s => fromEither(route.query.decode(s.query)))
+          .bindL("query", _ => fromNullable(L.get(router, "query")))
+          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
+          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("parsedQuery", s => parseQuery(s.query))
+          .bindL("decodedQuery", s =>
+            fromEither(route.query.decode(s.parsedQuery))
+          )
           .return(s => children(s.decodedQuery))
           .toNullable()
       )
@@ -211,7 +227,7 @@ export function defRQ<Q extends t.Props, QO extends t.Props>(
 }
 
 export function defR(route: RouteSpec): Route {
-  const asPath = () => generateAsPath(route.pattern, {}).toNullable();
+  const asPath = () => generateAsPath(route.pattern, {}).toUndefined();
 
   const pageUrl = () =>
     calculateUrl({
@@ -225,9 +241,11 @@ export function defR(route: RouteSpec): Route {
     children: () => React.ReactElement;
   }> = ({ children }) =>
     React.createElement(
-      withRouter(({ router: { query, asPath } }) =>
+      withRouter(({ router }) =>
         Do(option)
-          .bindL("match", _ => matchQuery(query, asPath, route.pattern))
+          .bindL("query", _ => fromNullable(L.get(router, "query")))
+          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
+          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
           .return(_ => children())
           .toNullable()
       )

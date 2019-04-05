@@ -22,10 +22,11 @@ const performMatching: Function2<string, PathRegex, Option<string[]>> = (
   regex
 ) => fromNullable(regex.path.exec(url.split("?")[0]));
 
-const extractParameters: Function2<string[], Key[], Option<Params>> = (
-  matched,
-  keys
-) =>
+const extractParameters: Function2<
+  (string | undefined)[],
+  Key[],
+  Option<Params>
+> = (matched, keys) =>
   tryCatch(() =>
     // prettier-ignore
     L.zipObject(
@@ -35,7 +36,7 @@ const extractParameters: Function2<string[], Key[], Option<Params>> = (
   );
 
 type CalculateUrl = {
-  original: string;
+  original: string | undefined;
   page: string;
   params: Params;
   query: Params;
@@ -51,7 +52,7 @@ export const calculateUrl: Function1<CalculateUrl, string> = ({
     `/${page}?`,
     [
       `params=${encodeURIComponent(JSON.stringify(params))}`,
-      `original=${encodeURIComponent(original)}`,
+      `original=${original && encodeURIComponent(original)}`,
       `query=${encodeURIComponent(JSON.stringify(query))}`
     ].join("&")
   ].join("");
@@ -60,7 +61,7 @@ export const matchOrNone: Function2<
   string,
   string,
   Option<{
-    values: string[];
+    values: (string | undefined)[];
     keys: Key[];
   }>
 > = (url, pattern) =>
