@@ -4,16 +4,33 @@ import { AsHref } from "./AsHref";
 import { OptionalT } from "./OptionalT";
 
 export type RoutePQ<
-  P extends t.Props,
-  PO extends t.Props,
-  Q extends t.Props,
-  QO extends t.Props
-> = RoutePQSpec<P, PO, Q, QO> & {
-  generateAsPath: (p: OptionalT<P, PO>, q: OptionalT<Q, QO>) => string;
-  pageUrl: (p: OptionalT<P, PO>, q: OptionalT<Q, QO>) => string;
-  linkTo: (p: OptionalT<P, PO>, q: OptionalT<Q, QO>) => AsHref;
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props,
+  RequiredQuery extends t.Props,
+  OptionalQuery extends t.Props
+> = RoutePQSpec<
+  RequiredParams,
+  OptionalParams,
+  RequiredQuery,
+  OptionalQuery
+> & {
+  generateAsPath: (
+    p: OptionalT<RequiredParams, OptionalParams>,
+    q: OptionalT<RequiredQuery, OptionalQuery>
+  ) => string;
+  pageUrl: (
+    p: OptionalT<RequiredParams, OptionalParams>,
+    q: OptionalT<RequiredQuery, OptionalQuery>
+  ) => string;
+  linkTo: (
+    p: OptionalT<RequiredParams, OptionalParams>,
+    q: OptionalT<RequiredQuery, OptionalQuery>
+  ) => AsHref;
   Match: React.SFC<{
-    children: (p: OptionalT<P, PO>, q: OptionalT<Q, QO>) => React.ReactElement;
+    children: (
+      p: OptionalT<RequiredParams, OptionalParams>,
+      q: OptionalT<RequiredQuery, OptionalQuery>
+    ) => React.ReactElement;
   }>;
 };
 

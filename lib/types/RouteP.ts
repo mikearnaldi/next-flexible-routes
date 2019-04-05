@@ -3,15 +3,17 @@ import * as t from "io-ts";
 import { AsHref } from "./AsHref";
 import { OptionalT } from "./OptionalT";
 
-export type RouteP<P extends t.Props, PO extends t.Props> = RoutePSpec<
-  P,
-  PO
-> & {
-  generateAsPath: (p: OptionalT<P, PO>) => string;
-  pageUrl: (p: OptionalT<P, PO>) => string;
-  linkTo: (p: OptionalT<P, PO>) => AsHref;
+export type RouteP<
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props
+> = RoutePSpec<RequiredParams, OptionalParams> & {
+  generateAsPath: (p: OptionalT<RequiredParams, OptionalParams>) => string;
+  pageUrl: (p: OptionalT<RequiredParams, OptionalParams>) => string;
+  linkTo: (p: OptionalT<RequiredParams, OptionalParams>) => AsHref;
   Match: React.SFC<{
-    children: (p: OptionalT<P, PO>) => React.ReactElement;
+    children: (
+      p: OptionalT<RequiredParams, OptionalParams>
+    ) => React.ReactElement;
   }>;
 };
 

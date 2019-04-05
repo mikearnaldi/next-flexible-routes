@@ -6,8 +6,12 @@ import { RouteP } from "./RouteP";
 import { Route } from "./Route";
 
 export type RouteU<
-  P extends t.Props,
-  PO extends t.Props,
-  Q extends t.Props,
-  QO extends t.Props
-> = RoutePQ<P, PO, Q, QO> | RouteQ<Q, QO> | RouteP<P, PO> | Route;
+  RequiredParams extends t.Props,
+  OptionalParams extends t.Props,
+  RequiredQuery extends t.Props,
+  OptionalQuery extends t.Props
+> =
+  | RoutePQ<RequiredParams, OptionalParams, RequiredQuery, OptionalQuery>
+  | RouteQ<RequiredQuery, OptionalQuery>
+  | RouteP<RequiredParams, OptionalParams>
+  | Route;
