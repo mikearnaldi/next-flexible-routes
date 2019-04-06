@@ -12,7 +12,7 @@
     "build": "next build",
     "dev": "ts-node ./server.dev.ts",
     "start": "ts-node ./server.ts",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "main": "./lib/index.js",
   "keywords": [
