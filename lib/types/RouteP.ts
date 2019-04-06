@@ -2,6 +2,7 @@ import * as t from "io-ts";
 
 import { AsHref } from "./AsHref";
 import { OptionalT } from "./OptionalT";
+import { RouteSpec } from "./Route";
 
 export type RouteP<
   RequiredParams extends t.Props,
@@ -19,9 +20,7 @@ export type RoutePSpec<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props
 > = {
-  page: string;
-  pattern: string;
   params: t.IntersectionC<
     [t.TypeC<RequiredParams>, t.PartialC<OptionalParams>]
   >;
-};
+} & RouteSpec;
