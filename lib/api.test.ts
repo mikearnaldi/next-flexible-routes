@@ -1,72 +1,11 @@
 require("jasmine-check").install();
 
 import { gen } from "testcheck";
-import { defRPQ, defRQ, defRP, defR } from "./api";
+import { defRPQ, defR } from "./api";
 import { T } from "./extended.iots";
 import { stringT } from ".";
-import { numberT, dateT } from "./codecs";
 
 describe("Api", () => {
-  check.it(
-    "api should describe parametric routes correctly",
-    gen.asciiString.notEmpty(),
-    gen.asciiString.notEmpty(),
-    gen.posNumber.notEmpty(),
-    (valueA, valueB, n) => {
-      const routeA = defRP({
-        page: "testA",
-        pattern: "/testA/:valueA/test/:dt/:n?",
-        params: T.both(
-          {
-            valueA: stringT,
-            dt: dateT
-          },
-          {
-            n: numberT
-          }
-        )
-      });
-
-      const routeB = defRPQ({
-        page: "testB",
-        pattern: "/testB/:valueB",
-        params: T.required({
-          valueB: stringT
-        }),
-        query: T.required({
-          valueQ: stringT
-        })
-      });
-
-      const dt = new Date();
-
-      expect(routeA.generateAsPath({ valueA, dt, n })).toEqual(
-        `/testA/${encodeURIComponent(valueA)}/test/${encodeURIComponent(
-          dt.toISOString()
-        )}/${encodeURIComponent(n.toString())}`
-      );
-
-      const encB = encodeURIComponent(valueB);
-
-      expect(routeB.generateAsPath({ valueB }, { valueQ: valueB })).toEqual(
-        `/testB/${encB}?valueQ=${encB}`
-      );
-    }
-  );
-
-  check.it("api should describe static routes correctly", () => {
-    const routeC = defRQ({
-      page: "testC",
-      pattern: "/testC",
-      query: T.optional({
-        v: stringT
-      })
-    });
-
-    expect(routeC.generateAsPath({ v: "test" })).toEqual(`/testC?v=test`);
-    expect(routeC.generateAsPath({})).toEqual(`/testC`);
-  });
-
   check.it("api should generate linkTo for staticR correctly", () => {
     const routeC = defR({
       page: "testC",

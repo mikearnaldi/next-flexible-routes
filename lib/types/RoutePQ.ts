@@ -14,14 +14,6 @@ export type RoutePQ<
   RequiredQuery,
   OptionalQuery
 > & {
-  generateAsPath: (
-    p: OptionalT<RequiredParams, OptionalParams>,
-    q: OptionalT<RequiredQuery, OptionalQuery>
-  ) => string | undefined;
-  pageUrl: (
-    p: OptionalT<RequiredParams, OptionalParams>,
-    q: OptionalT<RequiredQuery, OptionalQuery>
-  ) => string | undefined;
   linkTo: (
     p: OptionalT<RequiredParams, OptionalParams>,
     q: OptionalT<RequiredQuery, OptionalQuery>

@@ -6,8 +6,6 @@ export type RouteSpec = {
 };
 
 export type Route = RouteSpec & {
-  generateAsPath: () => string | undefined;
-  pageUrl: () => string | undefined;
   linkTo: () => AsHref;
   Match: React.SFC<{
     children: () => React.ReactElement;

@@ -7,10 +7,6 @@ export type RouteP<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props
 > = RoutePSpec<RequiredParams, OptionalParams> & {
-  generateAsPath: (
-    p: OptionalT<RequiredParams, OptionalParams>
-  ) => string | undefined;
-  pageUrl: (p: OptionalT<RequiredParams, OptionalParams>) => string | undefined;
   linkTo: (p: OptionalT<RequiredParams, OptionalParams>) => AsHref;
   Match: React.SFC<{
     children: (

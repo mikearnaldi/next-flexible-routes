@@ -10,6 +10,38 @@ import { defRQ, defR } from "./api";
 configure({ adapter: new Adapter() });
 
 describe("React API should extract params and query from router", () => {
+  it("defRPQ should throw if params not match", () => {
+    expect(() =>
+      defRPQ({
+        page: "foo",
+        pattern: "/test/:name/a",
+        params: T.required({
+          namz: stringT
+        }),
+        query: T.both(
+          {
+            a: stringT
+          },
+          {
+            q: stringT
+          }
+        )
+      })
+    ).toThrow();
+  });
+
+  it("defRP should throw if params not match", () => {
+    expect(() =>
+      defRP({
+        page: "foo",
+        pattern: "/test/:name/a",
+        params: T.required({
+          namz: stringT
+        })
+      })
+    ).toThrow();
+  });
+
   it("defRPQ extract both Params and Query", () => {
     const barR = defRPQ({
       page: "foo",
@@ -25,6 +57,17 @@ describe("React API should extract params and query from router", () => {
           q: stringT
         }
       )
+    });
+
+    expect(barR.linkTo({ name: "bar" }, { a: "REQ", q: "OPT" })).toEqual({
+      as: "/test/bar/a?a=REQ&q=OPT",
+      href:
+        "/foo?params=" +
+        encodeURIComponent('{"name":"bar"}') +
+        "&original=" +
+        encodeURIComponent("/test/bar/a?a=REQ&q=OPT") +
+        "&query=" +
+        encodeURIComponent('{"a":"REQ","q":"OPT"}')
     });
 
     class RouterProvider extends React.Component {
@@ -76,7 +119,18 @@ describe("React API should extract params and query from router", () => {
       })
     });
 
-    const dt = new Date()
+    const dt = new Date();
+
+    expect(barR.linkTo({ dt })).toEqual({
+      as: "/test/" + encodeURIComponent(dt.toISOString()),
+      href:
+        "/foo?params=" +
+        encodeURIComponent('{"dt":"' + dt.toISOString() + '"}') +
+        "&original=" +
+        encodeURIComponent("/test/" + encodeURIComponent(dt.toISOString())) +
+        "&query=" +
+        encodeURIComponent("{}")
+    });
 
     class RouterProvider extends React.Component {
       static childContextTypes = {
@@ -88,9 +142,9 @@ describe("React API should extract params and query from router", () => {
           router: {
             asPath: "/test/" + encodeURIComponent(dt.toISOString()),
             query: {
-              params: '{"dt":"'+dt.toISOString()+'"}',
+              params: '{"dt":"' + dt.toISOString() + '"}',
               original: "/test/" + encodeURIComponent(dt.toISOString()),
-              query: '{}'
+              query: "{}"
             }
           }
         };
@@ -104,13 +158,7 @@ describe("React API should extract params and query from router", () => {
     expect(
       render(
         <RouterProvider>
-          <barR.Match>
-            {({ dt }) => (
-              <div>
-                {dt.toISOString()}
-              </div>
-            )}
-          </barR.Match>
+          <barR.Match>{({ dt }) => <div>{dt.toISOString()}</div>}</barR.Match>
         </RouterProvider>
       ).html()
     ).toEqual(dt.toISOString());
@@ -125,6 +173,19 @@ describe("React API should extract params and query from router", () => {
       })
     });
 
+    const n = 10;
+
+    expect(barR.linkTo({ n })).toEqual({
+      as: "/test?n=10",
+      href:
+        "/foo?params=" +
+        encodeURIComponent("{}") +
+        "&original=" +
+        encodeURIComponent("/test") +
+        "&query=" +
+        encodeURIComponent('{"n":"10"}')
+    });
+
     class RouterProvider extends React.Component {
       static childContextTypes = {
         router: PropTypes.object
@@ -135,7 +196,7 @@ describe("React API should extract params and query from router", () => {
           router: {
             asPath: "/test",
             query: {
-              params: '{}',
+              params: "{}",
               original: "/test",
               query: '{"n":10}'
             }
@@ -151,13 +212,7 @@ describe("React API should extract params and query from router", () => {
     expect(
       render(
         <RouterProvider>
-          <barR.Match>
-            {({ n }) => (
-              <div>
-                {n}
-              </div>
-            )}
-          </barR.Match>
+          <barR.Match>{({ n }) => <div>{n}</div>}</barR.Match>
         </RouterProvider>
       ).html()
     ).toEqual("10");
@@ -167,6 +222,17 @@ describe("React API should extract params and query from router", () => {
     const barR = defR({
       page: "foo",
       pattern: "/test"
+    });
+
+    expect(barR.linkTo()).toEqual({
+      as: "/test",
+      href:
+        "/foo?params=" +
+        encodeURIComponent("{}") +
+        "&original=" +
+        encodeURIComponent("/test") +
+        "&query=" +
+        encodeURIComponent("{}")
     });
 
     class RouterProvider extends React.Component {
@@ -179,9 +245,9 @@ describe("React API should extract params and query from router", () => {
           router: {
             asPath: "/test",
             query: {
-              params: '{}',
+              params: "{}",
               original: "/test",
-              query: '{}'
+              query: "{}"
             }
           }
         };
@@ -195,11 +261,7 @@ describe("React API should extract params and query from router", () => {
     expect(
       render(
         <RouterProvider>
-          <barR.Match>
-            {() => (
-              <div>child</div>
-            )}
-          </barR.Match>
+          <barR.Match>{() => <div>child</div>}</barR.Match>
         </RouterProvider>
       ).html()
     ).toEqual("child");
