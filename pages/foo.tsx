@@ -6,7 +6,7 @@ import { fooR, barR, homeR } from "../routes";
 export default () => (
   <>
     <fooR.Match>
-      {({ name, id, dt }) => (
+      {({ name, dt, id }) => (
         <div>
           Hi {name} Go to INDEX ({id} - {dt.toISOString()}):
           <Link {...homeR.linkTo()}>

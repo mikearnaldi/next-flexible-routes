@@ -1,23 +1,22 @@
 import * as t from "io-ts";
 
-export const numberT = new t.Type<number, string, string>(
+export const numberT = new t.Type<number, string, unknown>(
   "NumberCodec",
   t.number.is,
-  (src, context) => {
-    const n = parseFloat(src);
-    return isNaN(n) ? t.failure(src, context) : t.success(n);
-  },
+  (src, context) =>
+    t.string.validate(src, context).chain(s => {
+      const n = parseFloat(s);
+      return isNaN(n) ? t.failure(src, context) : t.success(n);
+    }),
   String
-) as t.Mixed;
+);
 
-export const stringT = new t.Type<string, string, string>(
+export const stringT = new t.Type<string, string, unknown>(
   "StringCodec",
   t.string.is,
-  (src, _) => {
-    return t.success(src);
-  },
+  (src, context) => t.string.validate(src, context).chain(s => t.success(s)),
   String
-) as t.Mixed;
+);
 
 export const dateT = new t.Type<Date, string, unknown>(
   "DateFromString",
@@ -28,4 +27,4 @@ export const dateT = new t.Type<Date, string, unknown>(
       return isNaN(d.getTime()) ? t.failure(src, context) : t.success(d);
     }),
   dt => dt.toISOString()
-) as t.Mixed;
+);

@@ -10,38 +10,6 @@ import { defRQ, defR } from "./api";
 configure({ adapter: new Adapter() });
 
 describe("React API should extract params and query from router", () => {
-  it("defRPQ should throw if params not match", () => {
-    expect(() =>
-      defRPQ({
-        page: "foo",
-        pattern: "/test/:name/a",
-        params: T.required({
-          namz: stringT
-        }),
-        query: T.both(
-          {
-            a: stringT
-          },
-          {
-            q: stringT
-          }
-        )
-      })
-    ).toThrow();
-  });
-
-  it("defRP should throw if params not match", () => {
-    expect(() =>
-      defRP({
-        page: "foo",
-        pattern: "/test/:name/a",
-        params: T.required({
-          namz: stringT
-        })
-      })
-    ).toThrow();
-  });
-
   it("defRPQ extract both Params and Query", () => {
     const barR = defRPQ({
       page: "foo",
@@ -198,7 +166,7 @@ describe("React API should extract params and query from router", () => {
             query: {
               params: "{}",
               original: "/test",
-              query: '{"n":10}'
+              query: '{"n":"10"}'
             }
           }
         };

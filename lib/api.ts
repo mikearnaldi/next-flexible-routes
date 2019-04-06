@@ -15,32 +15,26 @@ import { RoutePSpec, RouteP } from "./types/RouteP";
 import { IntersectionType } from "./types/OptionalT";
 
 function parseQuery(query: Record<string, string | string[] | undefined>) {
-  return tryCatch(() =>
-    query.query && typeof query.query === "string"
-      ? JSON.parse(query.query)
-      : {}
+  return tryCatch(
+    () =>
+      query.query && typeof query.query === "string" && JSON.parse(query.query)
   );
 }
 
 function parseParams(query: Record<string, string | string[] | undefined>) {
-  return tryCatch(() =>
-    query.params && typeof query.params === "string"
-      ? JSON.parse(query.params)
-      : {}
+  return tryCatch(
+    () =>
+      query.params &&
+      typeof query.params === "string" &&
+      JSON.parse(query.params)
   );
 }
 
 function matchQuery(
   query: Record<string, string | string[] | undefined>,
-  asPath: string,
   pattern: string
 ) {
-  return matchOrNone(
-    query.original && typeof query.original === "string"
-      ? query.original
-      : asPath,
-    pattern
-  );
+  return matchOrNone(query.original as string, pattern);
 }
 
 function throwIfWrongParams<Required extends t.Props, Optional extends t.Props>(
@@ -62,6 +56,34 @@ function throwIfWrongParams<Required extends t.Props, Optional extends t.Props>(
   }
 }
 
+function throwIfEmptyParams<Required extends t.Props, Optional extends t.Props>(
+  route: RouteSpec & { params: IntersectionType<Required, Optional> }
+) {
+  const params = L.flatten(route.params.types.map(p => Object.keys(p.props)));
+
+  if (params.length === 0) {
+    throw new Error(
+      "parameters cannot be empty for " +
+        route.pattern +
+        " if you don't have params please use defR/defRQ"
+    );
+  }
+}
+
+function throwIfEmptyQuery<Required extends t.Props, Optional extends t.Props>(
+  route: RouteSpec & { query: IntersectionType<Required, Optional> }
+) {
+  const params = L.flatten(route.query.types.map(p => Object.keys(p.props)));
+
+  if (params.length === 0) {
+    throw new Error(
+      "query cannot be empty for " +
+        route.pattern +
+        " if you don't have params please use defR/defRP"
+    );
+  }
+}
+
 export function defRPQ<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props,
@@ -79,12 +101,14 @@ export function defRPQ<
   type TypeQuery = t.TypeOf<typeof route.query>;
 
   throwIfWrongParams(route);
+  throwIfEmptyParams(route);
+  throwIfEmptyQuery(route);
 
   const asPath = (params: TypeParams, query: TypeQuery) =>
     Do(option)
       .bind("qs", option.of(queryString.stringify(query, { strict: false })))
       .bind("path", generateAsPath(route.pattern, params))
-      .return(s => `${s.path}${s.qs.length > 0 ? `?${s.qs}` : ""}`)
+      .return(s => `${s.path}?${s.qs}`)
       .toUndefined();
 
   const pageUrl = (params: TypeParams, query: TypeQuery) =>
@@ -102,8 +126,7 @@ export function defRPQ<
       withRouter(({ router }) =>
         Do(option)
           .bindL("query", _ => fromNullable(L.get(router, "query")))
-          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
-          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("match", s => matchQuery(s.query, route.pattern))
           .bindL("parsedParams", s => parseParams(s.query))
           .bindL("parsedQuery", s => parseQuery(s.query))
           .bindL("decodedQuery", s =>
@@ -135,6 +158,7 @@ export function defRP<
   type TypeParams = t.TypeOf<typeof route.params>;
 
   throwIfWrongParams(route);
+  throwIfEmptyParams(route);
 
   const asPath = (params: TypeParams) =>
     generateAsPath(route.pattern, params).toUndefined();
@@ -154,8 +178,7 @@ export function defRP<
       withRouter(({ router }) =>
         Do(option)
           .bindL("query", _ => fromNullable(L.get(router, "query")))
-          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
-          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("match", s => matchQuery(s.query, route.pattern))
           .bindL("parse", s => parseParams(s.query))
           .bindL("decodedParams", s => fromEither(route.params.decode(s.parse)))
           .return(s => children(s.decodedParams))
@@ -181,11 +204,13 @@ export function defRQ<
 ): RouteQ<RequiredQuery, OptionalQuery> {
   type TypeQuery = t.TypeOf<typeof route.query>;
 
+  throwIfEmptyQuery(route);
+
   const asPath = (query: TypeQuery) => {
     const qs = queryString.stringify(query, { strict: false });
 
     return generateAsPath(route.pattern, {})
-      .map(s => `${s}${qs.length > 0 ? `?${qs}` : ""}`)
+      .map(s => `${s}?${qs}`)
       .toUndefined();
   };
 
@@ -204,8 +229,7 @@ export function defRQ<
       withRouter(({ router }) =>
         Do(option)
           .bindL("query", _ => fromNullable(L.get(router, "query")))
-          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
-          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("match", s => matchQuery(s.query, route.pattern))
           .bindL("parsedQuery", s => parseQuery(s.query))
           .bindL("decodedQuery", s =>
             fromEither(route.query.decode(s.parsedQuery))
@@ -243,8 +267,7 @@ export function defR(route: RouteSpec): Route {
       withRouter(({ router }) =>
         Do(option)
           .bindL("query", _ => fromNullable(L.get(router, "query")))
-          .bindL("asPath", _ => fromNullable(L.get(router, "asPath")))
-          .bindL("match", s => matchQuery(s.query, s.asPath, route.pattern))
+          .bindL("match", s => matchQuery(s.query, route.pattern))
           .return(_ => children())
           .toNullable()
       )
