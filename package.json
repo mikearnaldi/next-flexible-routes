@@ -12,7 +12,8 @@
     "build": "next build",
     "dev": "ts-node ./server.dev.ts",
     "start": "ts-node ./server.ts",
-    "test": "jest --coverage"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "test": "jest"
   },
   "main": "./lib/index.js",
   "keywords": [
@@ -61,6 +62,7 @@
     "@types/supertest": "^2.0.7",
     "@zeit/next-typescript": "^1.1.1",
     "assert": "^1.4.1",
+    "coveralls": "^3.0.3",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.0",
     "express": "^4.16.4",
