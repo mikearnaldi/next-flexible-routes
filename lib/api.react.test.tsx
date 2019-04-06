@@ -3,7 +3,9 @@ import { configure, render } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 import PropTypes from "prop-types";
 
-import { defRPQ, T, stringT } from ".";
+import { defRPQ, T, stringT, defRP } from ".";
+import { dateT, numberT } from "./codecs";
+import { defRQ, defR } from "./api";
 
 configure({ adapter: new Adapter() });
 
@@ -63,5 +65,143 @@ describe("React API should extract params and query from router", () => {
         </RouterProvider>
       ).html()
     ).toEqual("barREQOPT");
+  });
+
+  it("defRP extract Params", () => {
+    const barR = defRP({
+      page: "foo",
+      pattern: "/test/:dt",
+      params: T.required({
+        dt: dateT
+      })
+    });
+
+    const dt = new Date()
+
+    class RouterProvider extends React.Component {
+      static childContextTypes = {
+        router: PropTypes.object
+      };
+
+      getChildContext() {
+        return {
+          router: {
+            asPath: "/test/" + encodeURIComponent(dt.toISOString()),
+            query: {
+              params: '{"dt":"'+dt.toISOString()+'"}',
+              original: "/test/" + encodeURIComponent(dt.toISOString()),
+              query: '{}'
+            }
+          }
+        };
+      }
+
+      render() {
+        return this.props.children;
+      }
+    }
+
+    expect(
+      render(
+        <RouterProvider>
+          <barR.Match>
+            {({ dt }) => (
+              <div>
+                {dt.toISOString()}
+              </div>
+            )}
+          </barR.Match>
+        </RouterProvider>
+      ).html()
+    ).toEqual(dt.toISOString());
+  });
+
+  it("defRQ extract Query", () => {
+    const barR = defRQ({
+      page: "foo",
+      pattern: "/test",
+      query: T.required({
+        n: numberT
+      })
+    });
+
+    class RouterProvider extends React.Component {
+      static childContextTypes = {
+        router: PropTypes.object
+      };
+
+      getChildContext() {
+        return {
+          router: {
+            asPath: "/test",
+            query: {
+              params: '{}',
+              original: "/test",
+              query: '{"n":10}'
+            }
+          }
+        };
+      }
+
+      render() {
+        return this.props.children;
+      }
+    }
+
+    expect(
+      render(
+        <RouterProvider>
+          <barR.Match>
+            {({ n }) => (
+              <div>
+                {n}
+              </div>
+            )}
+          </barR.Match>
+        </RouterProvider>
+      ).html()
+    ).toEqual("10");
+  });
+
+  it("defR extract nothing", () => {
+    const barR = defR({
+      page: "foo",
+      pattern: "/test"
+    });
+
+    class RouterProvider extends React.Component {
+      static childContextTypes = {
+        router: PropTypes.object
+      };
+
+      getChildContext() {
+        return {
+          router: {
+            asPath: "/test",
+            query: {
+              params: '{}',
+              original: "/test",
+              query: '{}'
+            }
+          }
+        };
+      }
+
+      render() {
+        return this.props.children;
+      }
+    }
+
+    expect(
+      render(
+        <RouterProvider>
+          <barR.Match>
+            {() => (
+              <div>child</div>
+            )}
+          </barR.Match>
+        </RouterProvider>
+      ).html()
+    ).toEqual("child");
   });
 });
