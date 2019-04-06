@@ -17,7 +17,7 @@
     "lodash": "^4.17.11",
     "monocle-ts": "^1.7.1",
     "next": "^8.0.3",
-    "next-flexible-routes": "^0.0.4",
+    "next-flexible-routes": "0.0.5",
     "path-to-regexp": "^3.0.0",
     "preact": "^8.4.2",
     "query-string": "^6.4.2",
