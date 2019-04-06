@@ -1,5 +1,5 @@
 import React from "react";
-import { homeR, profileR, accountR } from "../routes";
+import { homeR, profileR, accountR } from "../../routes";
 import Link from "next/link";
 
 const Account = () => (

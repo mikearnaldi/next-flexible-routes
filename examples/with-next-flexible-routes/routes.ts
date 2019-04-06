@@ -16,7 +16,8 @@ export const accountR = defRPQ({
   }),
   query: T.required({
     id: stringT
-  })
+  }),
+  remote: "http://127.0.0.1:3000/remote"
 });
 
 export const homeR = defR({
