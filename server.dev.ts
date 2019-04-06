@@ -2,8 +2,9 @@ import express from "express";
 import next from "next";
 import { rewriteMiddleware } from "./lib";
 import { routes } from "./routes";
+import L from "lodash";
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+const port = parseInt(L.get(process, "env.PORT", "3000"), 10);
 const app = next({ dev: true });
 const handle = app.getRequestHandler();
 
