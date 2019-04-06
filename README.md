@@ -1,5 +1,5 @@
 # Next Flexible Routes 
-[![Build Status](https://travis-ci.org/mikearnaldi/next-flexible-routes.svg?branch=master)](https://travis-ci.org/mikearnaldi/next-flexible-routes) [![npm version](https://img.shields.io/npm/v/next-flexible-routes.svg?style=flat)](https://www.npmjs.com/package/next-flexible-routes)
+[![Build Status](https://travis-ci.org/mikearnaldi/next-flexible-routes.svg?branch=master)](https://travis-ci.org/mikearnaldi/next-flexible-routes) [![Coverage Status](https://coveralls.io/repos/github/mikearnaldi/next-flexible-routes/badge.svg?branch=master)](https://coveralls.io/github/mikearnaldi/next-flexible-routes?branch=master) [![npm version](https://img.shields.io/npm/v/next-flexible-routes.svg?style=flat)](https://www.npmjs.com/package/next-flexible-routes) 
 
 Next Flexible Routes is a library to takle the pain of routing withing a next.js app.
 
