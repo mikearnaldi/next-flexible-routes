@@ -27,4 +27,9 @@ describe("Codecs", () => {
 
     expect(dateT.decode(dt.toISOString())).toEqual(right(dt));
   });
+  it("dateT should correctly guards for date", () => {
+    const dt = new Date();
+
+    expect(dateT.is(dt)).toEqual(true);
+  });
 });
