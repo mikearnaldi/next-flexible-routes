@@ -7,7 +7,7 @@ export type RouteSpec = {
 };
 
 export type Route = RouteSpec & {
-  linkTo: () => AsHref;
+  linkTo: (hash?: string) => AsHref;
   Match: React.SFC<{
     children: () => React.ReactElement;
   }>;

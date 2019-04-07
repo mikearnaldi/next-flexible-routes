@@ -17,7 +17,8 @@ export type RoutePQ<
 > & {
   linkTo: (
     p: OptionalT<RequiredParams, OptionalParams>,
-    q: OptionalT<RequiredQuery, OptionalQuery>
+    q: OptionalT<RequiredQuery, OptionalQuery>,
+    hash?: string
   ) => AsHref;
   Match: React.SFC<{
     children: (

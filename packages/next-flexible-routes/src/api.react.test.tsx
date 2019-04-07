@@ -38,6 +38,19 @@ describe("React API should extract params and query from router", () => {
         encodeURIComponent('{"a":"REQ","q":"OPT"}')
     });
 
+    expect(
+      barR.linkTo({ name: "bar" }, { a: "REQ", q: "OPT" }, "hash")
+    ).toEqual({
+      as: "/test/bar/a?a=REQ&q=OPT#hash",
+      href:
+        "/foo?params=" +
+        encodeURIComponent('{"name":"bar"}') +
+        "&original=" +
+        encodeURIComponent("/test/bar/a?a=REQ&q=OPT") +
+        "&query=" +
+        encodeURIComponent('{"a":"REQ","q":"OPT"}')
+    });
+
     class RouterProvider extends React.Component {
       static childContextTypes = {
         router: PropTypes.object
@@ -91,6 +104,17 @@ describe("React API should extract params and query from router", () => {
 
     expect(barR.linkTo({ dt })).toEqual({
       as: "/test/" + encodeURIComponent(dt.toISOString()),
+      href:
+        "/foo?params=" +
+        encodeURIComponent('{"dt":"' + dt.toISOString() + '"}') +
+        "&original=" +
+        encodeURIComponent("/test/" + encodeURIComponent(dt.toISOString())) +
+        "&query=" +
+        encodeURIComponent("{}")
+    });
+
+    expect(barR.linkTo({ dt }, "hash")).toEqual({
+      as: "/test/" + encodeURIComponent(dt.toISOString()) + "#hash",
       href:
         "/foo?params=" +
         encodeURIComponent('{"dt":"' + dt.toISOString() + '"}') +
@@ -154,6 +178,17 @@ describe("React API should extract params and query from router", () => {
         encodeURIComponent('{"n":"10"}')
     });
 
+    expect(barR.linkTo({ n }, "hash")).toEqual({
+      as: "/test?n=10#hash",
+      href:
+        "/foo?params=" +
+        encodeURIComponent("{}") +
+        "&original=" +
+        encodeURIComponent("/test") +
+        "&query=" +
+        encodeURIComponent('{"n":"10"}')
+    });
+
     class RouterProvider extends React.Component {
       static childContextTypes = {
         router: PropTypes.object
@@ -194,6 +229,17 @@ describe("React API should extract params and query from router", () => {
 
     expect(barR.linkTo()).toEqual({
       as: "/test",
+      href:
+        "/foo?params=" +
+        encodeURIComponent("{}") +
+        "&original=" +
+        encodeURIComponent("/test") +
+        "&query=" +
+        encodeURIComponent("{}")
+    });
+
+    expect(barR.linkTo("hash")).toEqual({
+      as: "/test#hash",
       href:
         "/foo?params=" +
         encodeURIComponent("{}") +

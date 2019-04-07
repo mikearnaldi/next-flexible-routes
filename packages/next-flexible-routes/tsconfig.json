@@ -8,6 +8,5 @@
     "target": "es5",
     "declaration": true
   },
-  "include": ["src/", "declarations.d.ts"],
-  "exclude": ["**/*.test.*"]
+  "include": ["src/", "declarations.d.ts"]
 }

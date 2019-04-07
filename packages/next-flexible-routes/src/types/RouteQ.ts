@@ -8,7 +8,7 @@ export type RouteQ<
   RequiredQuery extends t.Props,
   OptionalQuery extends t.Props
 > = RouteQSpec<RequiredQuery, OptionalQuery> & {
-  linkTo: (q: OptionalT<RequiredQuery, OptionalQuery>) => AsHref;
+  linkTo: (q: OptionalT<RequiredQuery, OptionalQuery>, hash?: string) => AsHref;
   Match: React.SFC<{
     children: (
       q: OptionalT<RequiredQuery, OptionalQuery>

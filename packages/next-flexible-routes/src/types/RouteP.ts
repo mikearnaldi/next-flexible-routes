@@ -8,7 +8,7 @@ export type RouteP<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props
 > = RoutePSpec<RequiredParams, OptionalParams> & {
-  linkTo: (p: OptionalT<RequiredParams, OptionalParams>) => AsHref;
+  linkTo: (p: OptionalT<RequiredParams, OptionalParams>, hash?: string) => AsHref;
   Match: React.SFC<{
     children: (
       p: OptionalT<RequiredParams, OptionalParams>

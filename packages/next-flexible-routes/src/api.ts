@@ -142,8 +142,8 @@ export function defRPQ<
 
   return {
     ...route,
-    linkTo: (params: TypeParams, query: TypeQuery) => ({
-      as: asPath(route.params.encode(params), query),
+    linkTo: (params: TypeParams, query: TypeQuery, hash?: string) => ({
+      as: asPath(route.params.encode(params), query) + (hash ? `#${hash}` : ""),
       href: pageUrl(route.params.encode(params), query)
     }),
     Match
@@ -188,8 +188,8 @@ export function defRP<
 
   return {
     ...route,
-    linkTo: (params: TypeParams) => ({
-      as: asPath(route.params.encode(params)),
+    linkTo: (params: TypeParams, hash?: string) => ({
+      as: asPath(route.params.encode(params)) + (hash ? `#${hash}` : ""),
       href: pageUrl(route.params.encode(params))
     }),
     Match
@@ -241,8 +241,8 @@ export function defRQ<
 
   return {
     ...route,
-    linkTo: (query: TypeQuery) => ({
-      as: asPath(route.query.encode(query)),
+    linkTo: (query: TypeQuery, hash?: string) => ({
+      as: asPath(route.query.encode(query)) + (hash ? `#${hash}` : ""),
       href: pageUrl(route.query.encode(query))
     }),
     Match
@@ -275,8 +275,8 @@ export function defR(route: RouteSpec): Route {
 
   return {
     ...route,
-    linkTo: () => ({
-      as: asPath(),
+    linkTo: (hash?: string) => ({
+      as: asPath() + (hash ? `#${hash}` : ""),
       href: pageUrl()
     }),
     Match
