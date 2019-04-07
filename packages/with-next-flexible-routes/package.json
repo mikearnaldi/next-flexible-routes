@@ -1,7 +1,7 @@
 {
   "name": "with-next-flexible-routes",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "dev": "ts-node server.ts",
     "build": "rm -rf .next; rm -rf build; next build; tsc; mv .next build/; cp -r static build/",
@@ -19,7 +19,7 @@
     "lodash": "^4.17.11",
     "monocle-ts": "^1.7.1",
     "next": "^8.0.3",
-    "next-flexible-routes": "^0.1.4",
+    "next-flexible-routes": "^0.1.5",
     "path-to-regexp": "^3.0.0",
     "preact": "^8.4.2",
     "query-string": "^6.4.2",
