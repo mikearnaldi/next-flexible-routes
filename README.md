@@ -25,22 +25,25 @@ Please refer to [api-docs](./docs/api.md) and [middleware-docs](./docs/middlewar
 yarn add next-flexible-routes
 ```
 
-you might need additional peer dependencies to be installed:
+you will need additional peer dependencies to be installed:
+
 ```
-"assert": "^1.4.1",
 "express": "^4.16.4",
 "fp-ts": "^1.15.0",
 "fp-ts-contrib": "^0.0.2",
 "io-ts": "^1.8.4",
 "lodash": "^4.17.11",
-"monocle-ts": "^1.7.1",
 "next": "^8.0.3",
 "path-to-regexp": "^3.0.0",
-"preact": "^8.4.2",
 "query-string": "^6.4.2",
-"react": "^16.8.6",
-"react-dom": "^16.8.6",
-"ts-node": "^8.0.3"
+"react": "^16.8.5",
+"react-dom": "^16.8.5"
+```
+
+quickly:
+
+```
+yarn add express fp-ts fp-ts-contrib io-ts lodash next path-to-regexp query-string react react-dom
 ```
 
 ## Contributing

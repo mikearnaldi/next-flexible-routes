@@ -32,21 +32,16 @@
     "flexible-route"
   ],
   "peerDependencies": {
-    "assert": "^1.4.1",
     "express": "^4.16.4",
     "fp-ts": "^1.15.0",
     "fp-ts-contrib": "^0.0.2",
     "io-ts": "^1.8.4",
     "lodash": "^4.17.11",
-    "monocle-ts": "^1.7.1",
     "next": "^8.0.3",
     "path-to-regexp": "^3.0.0",
-    "preact": "^8.4.2",
     "query-string": "^6.4.2",
     "react": "^16.8.5",
-    "react-dom": "^16.8.5",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.3.4000"
+    "react-dom": "^16.8.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
