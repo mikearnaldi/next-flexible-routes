@@ -8,20 +8,42 @@ import { generateAsPath } from "./transform";
 import { RouteQ, RouteQSpec } from "./types/RouteQ";
 import { RoutePQ, RoutePQSpec } from "./types/RoutePQ";
 import { withRouter } from "next/router";
-import { fromEither, tryCatch, option, fromNullable } from "fp-ts/lib/Option";
+import {
+  fromEither,
+  tryCatch,
+  option,
+  fromNullable,
+  Option
+} from "fp-ts/lib/Option";
 import { Do } from "fp-ts-contrib/lib/Do";
 import { RouteSpec, Route } from "./types/Route";
 import { RoutePSpec, RouteP } from "./types/RouteP";
 import { IntersectionType } from "./types/OptionalT";
 
-function parseQuery(query: Record<string, string | string[] | undefined>) {
+/**
+ * Extract and parse original query from internal representation
+ *
+ * @param {(Record<string, string | string[] | undefined>)} query
+ * @returns {Option<any>}
+ */
+function parseQuery(
+  query: Record<string, string | string[] | undefined>
+): Option<any> {
   return tryCatch(
     () =>
       query.query && typeof query.query === "string" && JSON.parse(query.query)
   );
 }
 
-function parseParams(query: Record<string, string | string[] | undefined>) {
+/**
+ * Extract and parse original params from internal representation
+ *
+ * @param {(Record<string, string | string[] | undefined>)} query
+ * @returns {Option<any>}
+ */
+function parseParams(
+  query: Record<string, string | string[] | undefined>
+): Option<any> {
   return tryCatch(
     () =>
       query.params &&
@@ -30,13 +52,34 @@ function parseParams(query: Record<string, string | string[] | undefined>) {
   );
 }
 
+/**
+ * Match original url (asPath) with a provided pattern
+ *
+ * @param {(Record<string, string | string[] | undefined>)} query
+ * @param {string} pattern
+ * @returns {(Option<{
+ *   values: (string | undefined)[];
+ *   keys: pr.Key[];
+ * }>)}
+ */
 function matchQuery(
   query: Record<string, string | string[] | undefined>,
   pattern: string
-) {
+): Option<{
+  values: (string | undefined)[];
+  keys: pr.Key[];
+}> {
   return matchOrNone(query.original as string, pattern);
 }
 
+/**
+ * Throw in case parameters specified in pattern and in type don't match,
+ * used to check both params and query
+ *
+ * @template Required
+ * @template Optional
+ * @param {(RouteSpec & { params: IntersectionType<Required, Optional> })} route
+ */
 function throwIfWrongParams<Required extends t.Props, Optional extends t.Props>(
   route: RouteSpec & { params: IntersectionType<Required, Optional> }
 ) {
@@ -56,6 +99,13 @@ function throwIfWrongParams<Required extends t.Props, Optional extends t.Props>(
   }
 }
 
+/**
+ * Throw if parameters are empty
+ *
+ * @template Required
+ * @template Optional
+ * @param {(RouteSpec & { params: IntersectionType<Required, Optional> })} route
+ */
 function throwIfEmptyParams<Required extends t.Props, Optional extends t.Props>(
   route: RouteSpec & { params: IntersectionType<Required, Optional> }
 ) {
@@ -70,6 +120,13 @@ function throwIfEmptyParams<Required extends t.Props, Optional extends t.Props>(
   }
 }
 
+/**
+ * Throw if query is empty
+ *
+ * @template Required
+ * @template Optional
+ * @param {(RouteSpec & { query: IntersectionType<Required, Optional> })} route
+ */
 function throwIfEmptyQuery<Required extends t.Props, Optional extends t.Props>(
   route: RouteSpec & { query: IntersectionType<Required, Optional> }
 ) {
@@ -84,6 +141,22 @@ function throwIfEmptyQuery<Required extends t.Props, Optional extends t.Props>(
   }
 }
 
+/**
+ * Define a route with both query and params specification
+ *
+ * @export
+ * @template RequiredParams
+ * @template OptionalParams
+ * @template RequiredQuery
+ * @template OptionalQuery
+ * @param {RoutePQSpec<
+ *     RequiredParams,
+ *     OptionalParams,
+ *     RequiredQuery,
+ *     OptionalQuery
+ *   >} route
+ * @returns {RoutePQ<RequiredParams, OptionalParams, RequiredQuery, OptionalQuery>}
+ */
 export function defRPQ<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props,
@@ -149,6 +222,16 @@ export function defRPQ<
     Match
   };
 }
+
+/**
+ * Define a route with params specification
+ *
+ * @export
+ * @template RequiredParams
+ * @template OptionalParams
+ * @param {RoutePSpec<RequiredParams, OptionalParams>} route
+ * @returns {RouteP<RequiredParams, OptionalParams>}
+ */
 export function defRP<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props
@@ -196,6 +279,15 @@ export function defRP<
   };
 }
 
+/**
+ * Define a route with query specification
+ *
+ * @export
+ * @template RequiredQuery
+ * @template OptionalQuery
+ * @param {RouteQSpec<RequiredQuery, OptionalQuery>} route
+ * @returns {RouteQ<RequiredQuery, OptionalQuery>}
+ */
 export function defRQ<
   RequiredQuery extends t.Props,
   OptionalQuery extends t.Props
@@ -249,6 +341,13 @@ export function defRQ<
   };
 }
 
+/**
+ * Define a route with neither query nor params specification
+ *
+ * @export
+ * @param {RouteSpec} route
+ * @returns {Route}
+ */
 export function defR(route: RouteSpec): Route {
   const asPath = () => generateAsPath(route.pattern, {}).toUndefined();
 

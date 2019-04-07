@@ -1,5 +1,8 @@
 import * as iots from "io-ts";
 
+/**
+ * Utilities to construct runtime types, used for .params & .query
+ */
 export const T = {
   optional: <Optional extends iots.Props>(p: Optional) =>
     iots.intersection([iots.type({}), iots.partial(p)]),

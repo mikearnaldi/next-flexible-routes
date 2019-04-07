@@ -4,6 +4,9 @@ import { AsHref } from "./AsHref";
 import { OptionalT } from "./OptionalT";
 import { RouteSpec } from "./Route";
 
+/**
+ * Route API with Params and Query description
+ */
 export type RoutePQ<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props,
@@ -28,6 +31,9 @@ export type RoutePQ<
   }>;
 };
 
+/**
+ * Extend RouteSpec to define .params and .query
+ */
 export type RoutePQSpec<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props,

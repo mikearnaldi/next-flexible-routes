@@ -4,6 +4,9 @@ import { AsHref } from "./AsHref";
 import { OptionalT } from "./OptionalT";
 import { RouteSpec } from "./Route";
 
+/**
+ * Route API with Params description
+ */
 export type RouteP<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props
@@ -16,6 +19,9 @@ export type RouteP<
   }>;
 };
 
+/**
+ * Extend RouteSpec to define .params
+ */
 export type RoutePSpec<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props

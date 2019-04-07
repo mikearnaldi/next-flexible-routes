@@ -7,10 +7,17 @@ import { option } from "fp-ts/lib/Option";
 import { findFirst, array } from "fp-ts/lib/Array";
 import { RouteArray } from "./types/RouteArray";
 
+/**
+ * Prepare proxy server
+ */
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true
 });
 
+/**
+ * Define an middleware from a list of routes, used to rewrite pretty path
+ * to internal representation
+ */
 export const rewriteMiddleware: (routes: RouteArray) => RequestHandler = (
   routes: RouteArray
 ) => (req, res, next) => {
@@ -42,6 +49,9 @@ export const rewriteMiddleware: (routes: RouteArray) => RequestHandler = (
   )();
 };
 
+/**
+ * Wire middleware and custom page renderer to express
+ */
 export const wireToExpress = (
   renderer: (page: string) => { render: (req: Request, res: Response) => void }
 ) => (routes: RouteArray, app: Express) => {

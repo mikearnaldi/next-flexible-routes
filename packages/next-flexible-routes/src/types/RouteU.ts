@@ -5,6 +5,9 @@ import { RouteQ } from "./RouteQ";
 import { RouteP } from "./RouteP";
 import { Route } from "./Route";
 
+/**
+ * Unify Route into an ADT
+ */
 export type RouteU<
   RequiredParams extends t.Props,
   OptionalParams extends t.Props,
