@@ -1,7 +1,7 @@
 # Next Flexible Routes [![Build Status](https://travis-ci.org/mikearnaldi/next-flexible-routes.svg?branch=master)](https://travis-ci.org/mikearnaldi/next-flexible-routes) [![Coverage Status](https://coveralls.io/repos/github/mikearnaldi/next-flexible-routes/badge.svg?branch=master)](https://coveralls.io/github/mikearnaldi/next-flexible-routes?branch=master) [![npm version](https://img.shields.io/npm/v/next-flexible-routes.svg?style=flat)](https://www.npmjs.com/package/next-flexible-routes) 
-Next Flexible Routes is a library to takle the pain of routing withing a next.js app.
+Next Flexible Routes is a library to takle the pain of routing in a next.js app.
 
-We have been using alternative libraries internally at CreditSCRIPT for a while and we have fund them very easy to start with but very hard to scale.
+We have been using alternative libraries internally at [CreditSCRIPT](https://www.creditscript.com) for a while and we have fund them very easy to start with but very hard to scale.
 
 The reason is routing maps tend to change over time and it gets progressively hard to refactor without a strictly typed environment.
 
@@ -13,6 +13,7 @@ We decided to takle the pain and build a library for our own usage and we ended 
 * Minimal API to define routes
 * Maximum Flexibility on deployment
 * Custom (pluggable) codec to encode parameters (Date/UUID/etc)
+* Hash anchor management
 
 ## Usage
 Examples can be found in the [with-next-flexible-routes](./packages/with-next-flexible-routes) package
