@@ -17,6 +17,9 @@ We decided to takle the pain and build a library for our own usage and we ended 
 ## Usage
 Examples can be found in the [with-next-flexible-routes](./packages/with-next-flexible-routes) package
 
+## Documentation
+Please refer to [api-docs](./docs/api.md) and [middleware-docs](./docs/middleware.md)
+
 ## Installation
 ```bash
 yarn add next-flexible-routes
