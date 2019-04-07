@@ -9,7 +9,7 @@
     "url": "https://github.com/mikearnaldi/next-flexible-routes.git"
   },
   "scripts": {
-    "prepare": "tsc",
+    "prepare": "rm -rf README.md; cp ../../README.md ./; tsc",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "test": "jest"
   },
