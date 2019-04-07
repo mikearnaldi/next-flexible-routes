@@ -15,7 +15,7 @@ We decided to takle the pain and build a library for our own usage and we ended 
 * Custom (pluggable) codec to encode parameters (Date/UUID/etc)
 
 ## Usage
-Examples can be found in the [examples](./examples) folder
+Examples can be found in the [with-next-flexible-routes](./packages/with-next-flexible-routes) package
 
 ## Installation
 ```bash

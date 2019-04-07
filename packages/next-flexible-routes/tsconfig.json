@@ -4,10 +4,9 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "outDir": "build",
+    "outDir": "lib",
     "target": "es5",
     "declaration": true
   },
-  "include": ["pages/", "lib/", "declarations.d.ts"],
-  "exclude": ["*.test.*"]
+  "include": ["src/", "declarations.d.ts"]
 }
