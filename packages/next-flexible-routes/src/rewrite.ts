@@ -2,7 +2,6 @@ import pr, { Key } from "path-to-regexp";
 import L from "lodash";
 import { Option, fromNullable, option, tryCatch } from "fp-ts/lib/Option";
 import { Do } from "fp-ts-contrib/lib/Do";
-import { Function1, Function2, Function3 } from "fp-ts/lib/function";
 import { Params } from "./types/Params";
 import { RouteSpec } from "./types/Route";
 

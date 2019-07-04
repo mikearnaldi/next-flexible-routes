@@ -13,7 +13,7 @@
     "assert": "^1.4.1",
     "express": "^4.16.4",
     "fp-ts": "^1.15.0",
-    "fp-ts-contrib": "^0.0.2",
+    "fp-ts-contrib": "^0.1.2",
     "http-proxy": "^1.17.0",
     "io-ts": "^1.8.4",
     "lodash": "^4.17.11",
