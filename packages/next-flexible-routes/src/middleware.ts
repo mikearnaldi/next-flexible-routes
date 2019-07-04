@@ -3,9 +3,10 @@ import rewriteOrNone from "./rewrite";
 import { RequestHandler, Express, Request, Response } from "express";
 import httpProxy from "http-proxy";
 
-import { option } from "fp-ts/lib/Option";
+import { option, Option, isSome, fold } from "fp-ts/lib/Option";
 import { findFirst, array } from "fp-ts/lib/Array";
 import { RouteArray } from "./types/RouteArray";
+import { RouteSpec } from "./types/Route";
 
 /**
  * Prepare proxy server
@@ -22,22 +23,21 @@ export const rewriteMiddleware: (routes: RouteArray) => RequestHandler = (
   routes: RouteArray
 ) => (req, res, next) => {
   const routeOpt = option.compact(
-    findFirst(
+    findFirst((r: Option<{ rewrite: string; route: RouteSpec }>) => isSome(r))(
       array.map(routes, route =>
-        rewriteOrNone(req.url, route, req.query).map(r => ({
-          rewrite: r,
+        option.map(rewriteOrNone(req.url, route, req.query), rewrite => ({
+          rewrite,
           route
         }))
-      ),
-      r => r.isSome()
+      )
     )
   );
 
-  routeOpt.foldL(
+  fold(
     () => () => {
       next();
     },
-    ({ rewrite, route }) => () => {
+    ({ rewrite, route }: { rewrite: string; route: RouteSpec }) => () => {
       req.url = rewrite;
 
       if (typeof route.remote !== "undefined") {
@@ -46,7 +46,7 @@ export const rewriteMiddleware: (routes: RouteArray) => RequestHandler = (
         next();
       }
     }
-  )();
+  )(routeOpt)();
 };
 
 /**
