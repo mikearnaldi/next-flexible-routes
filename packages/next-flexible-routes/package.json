@@ -3,7 +3,7 @@
   "private": false,
   "license": "MIT",
   "author": "Michael Arnaldi",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/mikearnaldi/next-flexible-routes.git"
